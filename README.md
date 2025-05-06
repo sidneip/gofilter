@@ -20,6 +20,7 @@ Make sure you're using Go 1.18+ for generics support.
 - Support for operators: equals, not equals, greater than, less than, contains, etc.
 - Filter composition with AND, OR, NOT
 - Easy integration with any struct
+- Geospatial filtering for location-based data
 
 ## Usage Example
 
@@ -80,3 +81,42 @@ func main() {
 - `IsNotNil(field)` - Field is not nil
 - `IsZero(field)` - Field has its zero value
 - `IsNotZero(field)` - Field does not have its zero value
+
+### Geospatial Operators
+
+- `WithinRadius(latField, lngField, centerPoint, radiusKm)` - Checks if a location is within a radius from a center point
+- `OutsideRadius(latField, lngField, centerPoint, radiusKm)` - Checks if a location is outside a radius from a center point
+- `WithinBoundingBox(latField, lngField, box)` - Checks if a location is within a geographic rectangle
+- `SortByDistance(items, latField, lngField, centerPoint)` - Sorts items by distance from a center point
+
+#### Geospatial Example
+
+```go
+// Define location data
+locations := []Location{
+    {Name: "New York", Latitude: 40.7128, Longitude: -74.0060},
+    {Name: "Los Angeles", Latitude: 34.0522, Longitude: -118.2437},
+    {Name: "Chicago", Latitude: 41.8781, Longitude: -87.6298},
+}
+
+// Define a center point (San Francisco)
+sanFrancisco := filter.Point{Lat: 37.7749, Lng: -122.4194}
+
+// Find locations within 1000km of San Francisco
+nearSF := filter.Apply(locations, 
+    filter.WithinRadius[Location]("Latitude", "Longitude", sanFrancisco, 1000))
+
+// Define a bounding box for the United States (approximate)
+usBox := filter.BoundingBox{
+    SouthWest: filter.Point{Lat: 24.396308, Lng: -125.000000},
+    NorthEast: filter.Point{Lat: 49.384358, Lng: -66.934570},
+}
+
+// Find locations within the US
+locationsInUS := filter.Apply(locations,
+    filter.WithinBoundingBox[Location]("Latitude", "Longitude", usBox))
+
+// Sort locations by distance from Tokyo
+tokyo := filter.Point{Lat: 35.6762, Lng: 139.6503}
+sortedLocations := filter.SortByDistance(locations, "Latitude", "Longitude", tokyo)
+```
