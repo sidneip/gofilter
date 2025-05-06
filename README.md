@@ -21,6 +21,7 @@ Make sure you're using Go 1.18+ for generics support.
 - Filter composition with AND, OR, NOT
 - Easy integration with any struct
 - Geospatial filtering for location-based data
+- Map field filtering for key-value data structures
 
 ## Usage Example
 
@@ -81,6 +82,55 @@ func main() {
 - `IsNotNil(field)` - Field is not nil
 - `IsZero(field)` - Field has its zero value
 - `IsNotZero(field)` - Field does not have its zero value
+
+### Map Operators
+
+- `HasKey(field, key)` - Map field contains the specified key
+- `HasValue(field, value)` - Map field contains the specified value
+- `KeyValueEquals(field, key, value)` - Key in map field has the specified value
+- `MapContainsAll(field, kvPairs)` - Map field contains all the specified key-value pairs
+- `MapContainsAny(field, kvPairs)` - Map field contains at least one of the specified key-value pairs
+- `MapSizeEquals(field, size)` - Map field has exactly the specified number of entries
+- `MapSizeGreaterThan(field, size)` - Map field has more than the specified number of entries
+- `MapSizeLessThan(field, size)` - Map field has fewer than the specified number of entries
+
+#### Map Filter Example
+
+```go
+type Product struct {
+    Name       string
+    Attributes map[string]string
+}
+
+products := []Product{
+    {
+        Name: "Laptop", 
+        Attributes: map[string]string{
+            "brand": "TechBrand",
+            "color": "silver",
+        },
+    },
+    {
+        Name: "Phone", 
+        Attributes: map[string]string{
+            "brand": "MobileX", 
+            "color": "black",
+        },
+    },
+}
+
+// Find products with a specific brand
+techBrandProducts := filter.Apply(products, 
+    filter.KeyValueEquals[Product]("Attributes", "brand", "TechBrand"))
+
+// Find products that have all required attributes
+requiredAttrs := map[interface{}]interface{}{
+    "color": "silver",
+    "brand": "TechBrand",
+}
+matchingProducts := filter.Apply(products, 
+    filter.MapContainsAll[Product]("Attributes", requiredAttrs))
+```
 
 ### Geospatial Operators
 

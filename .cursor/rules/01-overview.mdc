@@ -1,0 +1,23 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# GoFilter Library Overview
+
+GoFilter is a generic library for dynamically and flexibly filtering slices of structs in Go.
+
+## Project Purpose
+This library fills a gap in Go's standard library by providing a way to filter slices of structs with:
+- Dynamic field selection
+- Multiple filter conditions
+- Access to nested fields
+- Composable filter operations
+
+## Usage Pattern
+GoFilter is designed to be used by creating filter conditions and applying them to slices:
+1. Import the filter package
+2. Define your data structures
+3. Create filter conditions using operators like `Equals`, `Gt`, `Contains`
+4. Compose filters with `And`, `Or`, `Not`
+5. Apply filters to your data

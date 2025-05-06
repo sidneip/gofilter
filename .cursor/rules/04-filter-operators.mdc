@@ -1,0 +1,45 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# GoFilter Operators
+
+The library provides a comprehensive set of filter operators for different data types and comparison needs.
+
+## Comparison Operators
+
+| Operator | Function | Description |
+|----------|----------|-------------|
+| Equals | `filter.Eq("field", value)` | Field equals value |
+| Not Equals | `filter.Ne("field", value)` | Field does not equal value |
+| Greater Than | `filter.Gt("field", value)` | Field is greater than value |
+| Less Than | `filter.Lt("field", value)` | Field is less than value |
+| Greater or Equal | `filter.Gte("field", value)` | Field is greater than or equal to value |
+| Less or Equal | `filter.Lte("field", value)` | Field is less than or equal to value |
+| Contains | `filter.Contains("field", value)` | Field contains value (strings, slices) |
+| In | `filter.In("field", []value)` | Field value is in the provided slice |
+
+## Logical Operators
+
+| Operator | Function | Description |
+|----------|----------|-------------|
+| And | `filter.And(filter1, filter2, ...)` | All filters must match |
+| Or | `filter.Or(filter1, filter2, ...)` | At least one filter must match |
+| Not | `filter.Not(filter)` | Negates the result of the filter |
+
+## Usage Examples
+
+```go
+// Find people older than 18 with a name containing 'a'
+filter.And(
+    filter.Gt("Age", 18),
+    filter.Contains("Name", "a"),
+)
+
+// Find people younger than 20 or with "reading" as a hobby
+filter.Or(
+    filter.Lt("Age", 20),
+    filter.Contains("Hobbies", "reading"),
+)
+```

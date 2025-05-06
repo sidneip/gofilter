@@ -1,0 +1,62 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# GoFilter Field Access
+
+## Field Path Notation
+
+GoFilter supports accessing nested fields using dot notation:
+
+```go
+// Access nested field
+filter.Eq("Address.City", "New York")
+```
+
+## Supported Field Types
+
+The library can filter based on various field types:
+
+- **Basic Types**: strings, integers, floats, booleans
+- **Collections**: slices, arrays
+- **Structs**: both direct and nested struct fields
+- **Maps**: when the key type allows for comparison
+- **Custom Types**: types that implement comparison interfaces
+
+## Handling Nil and Zero Values
+
+The library provides special handling for nil values and zero values:
+
+- `filter.IsNil("field")`: Checks if a field is nil (for pointers, slices, maps)
+- `filter.IsZero("field")`: Checks if a field has its zero value
+- `filter.IsNotNil("field")`: Checks if a field is not nil
+
+## Type Conversions
+
+The library performs automatic type conversions when possible:
+
+- String to number (for numeric comparisons)
+- Number to string (for string operations)
+- Type-specific conversions for custom operators
+
+## Example with Nested Fields
+
+```go
+type Address struct {
+    City    string
+    Country string
+}
+
+type Person struct {
+    Name    string
+    Age     int
+    Address Address
+}
+
+// Filter people living in USA and older than 21
+filter.And(
+    filter.Eq("Address.Country", "USA"),
+    filter.Gt("Age", 21),
+)
+```

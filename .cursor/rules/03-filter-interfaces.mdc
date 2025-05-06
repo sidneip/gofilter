@@ -1,0 +1,33 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# GoFilter Core Interfaces
+
+## Filter Interface
+
+The core of the library is the `Filter` interface, which defines how filters are applied to data:
+
+```go
+// Filter is the core interface that all filters must implement
+type Filter[T any] interface {
+    Apply(item T) bool
+}
+```
+
+All filter operators and compositions implement this interface, allowing them to be combined and composed.
+
+## Key Concepts
+
+1. **Generic Filters**: All filters use Go generics to work with any struct type
+2. **Field Access**: The library uses reflection to access struct fields by name
+3. **Operator Design**: Each operator is a separate type implementing the Filter interface
+4. **Composition**: Filters can be composed using And, Or, Not operations
+
+## Design Principles
+
+- **Simplicity**: Simple API with a focus on ease of use
+- **Flexibility**: Works with any struct type and field
+- **Composability**: Filters can be combined to create complex filtering logic
+- **Reusability**: Filters can be defined once and reused across multiple Apply calls

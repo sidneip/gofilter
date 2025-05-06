@@ -1,0 +1,30 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# GoFilter Code Structure
+
+## Package Organization
+
+The library is organized into the following main components:
+
+- `filter` package: Core functionality for creating and applying filters
+  - Main operations: `Apply`, `And`, `Or`, `Not`
+  - Comparison operators: `Equals`, `NotEquals`, `Gt`, `Lt`, `Contains`, etc.
+  
+## Key Files
+
+- [filter/filter.go](mdc:filter/filter.go): Core filter interfaces and types
+- [filter/operators.go](mdc:filter/operators.go): Implementation of filter operators
+- [filter/apply.go](mdc:filter/apply.go): Implementation of the Apply function
+- [filter/composition.go](mdc:filter/composition.go): Implementation of filter composition (And, Or, Not)
+
+## Directory Structure
+
+```
+gofilter/
+├── filter/         # Main package containing all filter functionality
+├── examples/       # Example usage of the library
+└── internal/       # Internal utilities used by the library
+```
