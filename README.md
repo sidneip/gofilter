@@ -3,6 +3,7 @@
 [![Go](https://github.com/sidneip/gofilter/actions/workflows/ci.yml/badge.svg)](https://github.com/sidneip/gofilter/actions/workflows/ci.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/sidneip/gofilter.svg)](https://pkg.go.dev/github.com/sidneip/gofilter)
 [![Go Report Card](https://goreportcard.com/badge/github.com/sidneip/gofilter)](https://goreportcard.com/report/github.com/sidneip/gofilter)
+[![codecov](https://codecov.io/gh/sidneip/gofilter/graph/badge.svg)](https://codecov.io/gh/sidneip/gofilter)
 ![Go Version](https://img.shields.io/badge/go-%3E%3D1.22-blue)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![Zero Dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen)
