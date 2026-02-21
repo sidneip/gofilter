@@ -7,11 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.2] - 2025-02-21
+
 ### Added
 - GoDoc documentation for all exported functions
-- Framework examples for Gin, Echo, Chi, and Fiber
+- Framework examples for Gin, Echo, Chi, and Fiber in README
 - CONTRIBUTING.md with contribution guidelines
-- Issue and PR templates
+- Issue templates (bug report, feature request)
+- Pull request template
+- CHANGELOG.md following Keep a Changelog format
+- Example functions for pkg.go.dev documentation
+- Go Report Card badge in README
 
 ## [0.0.1] - 2025-02-21
 
@@ -34,5 +40,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Nested field access with dot notation
 - Sorting functionality with `Sort` and `SortByDistance`
 
-[Unreleased]: https://github.com/sidneip/gofilter/compare/v0.0.1...HEAD
+[Unreleased]: https://github.com/sidneip/gofilter/compare/v0.0.2...HEAD
+[0.0.2]: https://github.com/sidneip/gofilter/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/sidneip/gofilter/releases/tag/v0.0.1
