@@ -6,10 +6,11 @@ import (
 	"sort"
 )
 
-// Point represents a geographic coordinate with latitude and longitude
+// Point represents a geographic coordinate with latitude and longitude.
+// Latitude ranges from -90 to 90, Longitude ranges from -180 to 180.
 type Point struct {
-	Lat float64
-	Lng float64
+	Lat float64 // Latitude in degrees
+	Lng float64 // Longitude in degrees
 }
 
 // earthRadiusKm is the radius of Earth in kilometers
@@ -83,15 +84,21 @@ func WithinRadius[T any](latField, lngField string, centerPoint Point, radiusKm 
 	})
 }
 
-// OutsideRadius returns a filter that checks if a location is outside a specified radius from a center point
+// OutsideRadius returns a filter that checks if a location is outside a specified radius.
+// This is the inverse of WithinRadius.
+//
+// Example:
+//
+//	filter.OutsideRadius[Place]("Lat", "Lng", center, 100.0)  // places > 100km from center
 func OutsideRadius[T any](latField, lngField string, centerPoint Point, radiusKm float64) Filter[T] {
 	return Not(WithinRadius[T](latField, lngField, centerPoint, radiusKm))
 }
 
-// BoundingBox represents a geographic rectangle defined by southwest and northeast corners
+// BoundingBox represents a geographic rectangle defined by its southwest and northeast corners.
+// Used for efficient spatial queries when you need items within a rectangular area.
 type BoundingBox struct {
-	SouthWest Point
-	NorthEast Point
+	SouthWest Point // Lower-left corner of the box
+	NorthEast Point // Upper-right corner of the box
 }
 
 // WithinBoundingBox returns a filter that checks if a location is within a bounding box

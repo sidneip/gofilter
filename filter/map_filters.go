@@ -4,7 +4,11 @@ import (
 	"reflect"
 )
 
-// HasKey checks if a map field contains the specified key
+// HasKey returns a filter that checks if a map field contains the specified key.
+//
+// Example:
+//
+//	filter.HasKey[Product]("Attrs", "color")  // products with "color" attribute
 func HasKey[T any](fieldName string, key interface{}) Filter[T] {
 	return FilterFunc[T](func(item T) bool {
 		fieldValue, err := getFieldValue(item, fieldName)
@@ -27,7 +31,11 @@ func HasKey[T any](fieldName string, key interface{}) Filter[T] {
 	})
 }
 
-// HasValue checks if a map field contains the specified value
+// HasValue returns a filter that checks if a map field contains the specified value.
+//
+// Example:
+//
+//	filter.HasValue[Product]("Attrs", "red")  // products with any attribute = "red"
 func HasValue[T any](fieldName string, value interface{}) Filter[T] {
 	return FilterFunc[T](func(item T) bool {
 		fieldValue, err := getFieldValue(item, fieldName)
@@ -55,7 +63,11 @@ func HasValue[T any](fieldName string, value interface{}) Filter[T] {
 	})
 }
 
-// KeyValueEquals checks if a specific key in a map has a specific value
+// KeyValueEquals returns a filter that checks if a specific key in a map has a specific value.
+//
+// Example:
+//
+//	filter.KeyValueEquals[Product]("Attrs", "color", "red")  // products where color = "red"
 func KeyValueEquals[T any](fieldName string, key, value interface{}) Filter[T] {
 	return FilterFunc[T](func(item T) bool {
 		fieldValue, err := getFieldValue(item, fieldName)

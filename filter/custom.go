@@ -8,8 +8,16 @@ import (
 	"time"
 )
 
-// ExportedGetFieldValue makes the getFieldValue function available for public use
-// This allows users to access field values in custom filters
+// ExportedGetFieldValue retrieves a field value from a struct by name.
+// Supports nested fields using dot notation (e.g., "Address.City").
+// This function is exported for use in custom filter implementations.
+//
+// Example:
+//
+//	val, err := filter.ExportedGetFieldValue(user, "Address.City")
+//	if err == nil {
+//	    fmt.Println(val.String())  // "São Paulo"
+//	}
 func ExportedGetFieldValue(item interface{}, fieldPath string) (reflect.Value, error) {
 	return getFieldValue(item, fieldPath)
 }
@@ -36,7 +44,14 @@ type StringMatchOptions struct {
 	IgnoreCase bool
 }
 
-// StringMatch applies advanced string matching with configurable options
+// StringMatch returns a filter with configurable string matching behavior.
+// Supports exact match, contains, prefix, and suffix modes with optional case insensitivity.
+//
+// Example:
+//
+//	filter.StringMatch[User]("Email", "gmail.com", filter.StringMatchOptions{
+//	    Mode: filter.SuffixMatch, IgnoreCase: true,
+//	})  // users with email ending in "gmail.com" (case-insensitive)
 func StringMatch[T any](fieldName string, value string, options StringMatchOptions) Filter[T] {
 	return FilterFunc[T](func(item T) bool {
 		fieldValue, err := getFieldValue(item, fieldName)
@@ -168,7 +183,12 @@ func ArrayContainsAll[T any](fieldName string, values []interface{}) Filter[T] {
 	})
 }
 
-// Between returns a filter that checks if a field is between min and max values (inclusive)
+// Between returns a filter that checks if a field value is within a range (inclusive).
+// Works with numeric types, strings, and any comparable type.
+//
+// Example:
+//
+//	filter.Between[User]("Age", 18, 65)  // users where 18 <= Age <= 65
 func Between[T any](fieldName string, min, max interface{}) Filter[T] {
 	return And[T](
 		Gte[T](fieldName, min),
@@ -280,7 +300,13 @@ func DateBetween[T any](fieldName string, start, end time.Time) Filter[T] {
 	)
 }
 
-// Sort returns a sorted copy of the slice based on a field
+// Sort returns a sorted copy of the slice based on a field value.
+// The original slice is not modified. Set ascending to true for A-Z/0-9 order.
+//
+// Example:
+//
+//	sorted := filter.Sort(users, "Name", true)   // sort by Name ascending
+//	sorted := filter.Sort(users, "Age", false)   // sort by Age descending
 func Sort[T any](items []T, fieldName string, ascending bool) []T {
 	result := make([]T, len(items))
 	copy(result, items)
@@ -310,12 +336,24 @@ func Sort[T any](items []T, fieldName string, ascending bool) []T {
 	return result
 }
 
-// Custom creates a custom filter using a function
+// Custom creates a filter from a user-provided function.
+// Use this when built-in operators don't cover your use case.
+//
+// Example:
+//
+//	filter.Custom[User](func(u User) bool {
+//	    return u.Age > 18 && strings.Contains(u.Email, "@company.com")
+//	})
 func Custom[T any](fn func(T) bool) Filter[T] {
 	return FilterFunc[T](fn)
 }
 
-// RegexMatch returns a filter that checks if a field matches a regular expression
+// RegexMatch returns a filter that checks if a string field matches a regular expression.
+// If the pattern is invalid, the filter will never match (no panic).
+//
+// Example:
+//
+//	filter.RegexMatch[User]("Email", `^[a-z]+@gmail\.com$`)  // Gmail users
 func RegexMatch[T any](fieldName, pattern string) Filter[T] {
 	regex, err := regexp.Compile(pattern)
 	if err != nil {

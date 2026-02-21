@@ -105,7 +105,12 @@ func compareValuesLess(a, b reflect.Value) (bool, error) {
 	}
 }
 
-// Eq returns a filter that checks if a field equals a value
+// Eq returns a filter that checks if a field equals a value.
+// Supports nested fields using dot notation (e.g., "Address.City").
+//
+// Example:
+//
+//	filter.Eq[User]("City", "SP")  // users where City == "SP"
 func Eq[T any](fieldName string, value interface{}) Filter[T] {
 	return FilterFunc[T](func(item T) bool {
 		fieldValue, err := getFieldValue(item, fieldName)
@@ -123,7 +128,11 @@ func Eq[T any](fieldName string, value interface{}) Filter[T] {
 	})
 }
 
-// Ne returns a filter that checks if a field does not equal a value
+// Ne returns a filter that checks if a field does not equal a value.
+//
+// Example:
+//
+//	filter.Ne[User]("Status", "inactive")  // users where Status != "inactive"
 func Ne[T any](fieldName string, value interface{}) Filter[T] {
 	return FilterFunc[T](func(item T) bool {
 		fieldValue, err := getFieldValue(item, fieldName)
@@ -141,7 +150,12 @@ func Ne[T any](fieldName string, value interface{}) Filter[T] {
 	})
 }
 
-// Gt returns a filter that checks if a field is greater than a value
+// Gt returns a filter that checks if a field is greater than a value.
+// Works with numeric types and strings (lexicographic comparison).
+//
+// Example:
+//
+//	filter.Gt[User]("Age", 18)  // users where Age > 18
 func Gt[T any](fieldName string, value interface{}) Filter[T] {
 	return FilterFunc[T](func(item T) bool {
 		fieldValue, err := getFieldValue(item, fieldName)
@@ -159,7 +173,12 @@ func Gt[T any](fieldName string, value interface{}) Filter[T] {
 	})
 }
 
-// Lt returns a filter that checks if a field is less than a value
+// Lt returns a filter that checks if a field is less than a value.
+// Works with numeric types and strings (lexicographic comparison).
+//
+// Example:
+//
+//	filter.Lt[User]("Age", 65)  // users where Age < 65
 func Lt[T any](fieldName string, value interface{}) Filter[T] {
 	return FilterFunc[T](func(item T) bool {
 		fieldValue, err := getFieldValue(item, fieldName)
@@ -177,7 +196,11 @@ func Lt[T any](fieldName string, value interface{}) Filter[T] {
 	})
 }
 
-// Gte returns a filter that checks if a field is greater than or equal to a value
+// Gte returns a filter that checks if a field is greater than or equal to a value.
+//
+// Example:
+//
+//	filter.Gte[User]("Age", 18)  // users where Age >= 18
 func Gte[T any](fieldName string, value interface{}) Filter[T] {
 	return FilterFunc[T](func(item T) bool {
 		fieldValue, err := getFieldValue(item, fieldName)
@@ -201,7 +224,11 @@ func Gte[T any](fieldName string, value interface{}) Filter[T] {
 	})
 }
 
-// Lte returns a filter that checks if a field is less than or equal to a value
+// Lte returns a filter that checks if a field is less than or equal to a value.
+//
+// Example:
+//
+//	filter.Lte[User]("Age", 65)  // users where Age <= 65
 func Lte[T any](fieldName string, value interface{}) Filter[T] {
 	return FilterFunc[T](func(item T) bool {
 		fieldValue, err := getFieldValue(item, fieldName)
@@ -225,8 +252,14 @@ func Lte[T any](fieldName string, value interface{}) Filter[T] {
 	})
 }
 
-// Contains returns a filter that checks if a field contains a value
-// Works for strings, slices, and arrays
+// Contains returns a filter that checks if a field contains a value.
+// For strings, it performs a substring search.
+// For slices and arrays, it checks if the value exists in the collection.
+//
+// Example:
+//
+//	filter.Contains[User]("Name", "ana")      // users with "ana" in Name
+//	filter.Contains[User]("Tags", "premium")  // users with "premium" in Tags slice
 func Contains[T any](fieldName string, value interface{}) Filter[T] {
 	return FilterFunc[T](func(item T) bool {
 		fieldValue, err := getFieldValue(item, fieldName)
@@ -259,7 +292,12 @@ func Contains[T any](fieldName string, value interface{}) Filter[T] {
 	})
 }
 
-// In returns a filter that checks if a field's value is in a slice of values
+// In returns a filter that checks if a field's value is in a list of allowed values.
+// Useful for filtering by multiple possible values.
+//
+// Example:
+//
+//	filter.In[User]("City", []interface{}{"SP", "RJ", "MG"})  // users in SP, RJ, or MG
 func In[T any](fieldName string, values []interface{}) Filter[T] {
 	return FilterFunc[T](func(item T) bool {
 		fieldValue, err := getFieldValue(item, fieldName)
