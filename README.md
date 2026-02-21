@@ -118,6 +118,132 @@ GET /users?email=test                          → 400: field "email" is not fil
 
 Works with **any Go HTTP router**: net/http, Chi, Gin, Echo, Fiber — gofilter just needs `url.Values`.
 
+### Framework Examples
+
+<details>
+<summary><strong>Gin</strong></summary>
+
+```go
+import (
+    "github.com/gin-gonic/gin"
+    "github.com/sidneip/gofilter/query"
+)
+
+func main() {
+    r := gin.Default()
+
+    r.GET("/users", func(c *gin.Context) {
+        page, err := query.ApplyPaginated(users, c.Request.URL.Query(),
+            query.WithMaxLimit(100),
+        )
+        if err != nil {
+            c.JSON(400, gin.H{"error": err.Error()})
+            return
+        }
+        c.JSON(200, page)
+    })
+
+    r.Run(":8080")
+}
+```
+
+</details>
+
+<details>
+<summary><strong>Echo</strong></summary>
+
+```go
+import (
+    "github.com/labstack/echo/v4"
+    "github.com/sidneip/gofilter/query"
+)
+
+func main() {
+    e := echo.New()
+
+    e.GET("/users", func(c echo.Context) error {
+        page, err := query.ApplyPaginated(users, c.QueryParams(),
+            query.WithMaxLimit(100),
+        )
+        if err != nil {
+            return c.JSON(400, map[string]string{"error": err.Error()})
+        }
+        return c.JSON(200, page)
+    })
+
+    e.Start(":8080")
+}
+```
+
+</details>
+
+<details>
+<summary><strong>Chi</strong></summary>
+
+```go
+import (
+    "encoding/json"
+    "net/http"
+
+    "github.com/go-chi/chi/v5"
+    "github.com/sidneip/gofilter/query"
+)
+
+func main() {
+    r := chi.NewRouter()
+
+    r.Get("/users", func(w http.ResponseWriter, r *http.Request) {
+        page, err := query.ApplyPaginated(users, r.URL.Query(),
+            query.WithMaxLimit(100),
+        )
+        if err != nil {
+            w.WriteHeader(http.StatusBadRequest)
+            json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+            return
+        }
+        json.NewEncoder(w).Encode(page)
+    })
+
+    http.ListenAndServe(":8080", r)
+}
+```
+
+</details>
+
+<details>
+<summary><strong>Fiber</strong></summary>
+
+```go
+import (
+    "github.com/gofiber/fiber/v2"
+    "github.com/sidneip/gofilter/query"
+)
+
+func main() {
+    app := fiber.New()
+
+    app.Get("/users", func(c *fiber.Ctx) error {
+        // Convert Fiber's query params to url.Values
+        params := make(map[string][]string)
+        c.Context().QueryArgs().VisitAll(func(key, value []byte) {
+            params[string(key)] = append(params[string(key)], string(value))
+        })
+
+        page, err := query.ApplyPaginated(users, params,
+            query.WithMaxLimit(100),
+        )
+        if err != nil {
+            return c.Status(400).JSON(fiber.Map{"error": err.Error()})
+        }
+        return c.JSON(page)
+    })
+
+    app.Listen(":8080")
+}
+```
+
+</details>
+
 ## Query Syntax
 
 Django-style suffixes on field names — intuitive for anyone who's used Django REST Framework, Rails, or Strapi:
