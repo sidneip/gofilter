@@ -263,6 +263,262 @@ func TestMapSize(t *testing.T) {
 	}
 }
 
+// Test edge cases for map filters
+
+type ProductWithNonMapField struct {
+	Name  string
+	Price float64
+	Tags  []string // Not a map
+}
+
+func TestHasKeyInvalidField(t *testing.T) {
+	products := []Product{
+		{Name: "Test", Attributes: map[string]string{"key": "value"}},
+	}
+
+	// Invalid field name
+	result := Apply(products, HasKey[Product]("InvalidField", "key"))
+	if len(result) != 0 {
+		t.Errorf("Expected 0 results for invalid field, got %d", len(result))
+	}
+}
+
+func TestHasKeyNonMapField(t *testing.T) {
+	products := []ProductWithNonMapField{
+		{Name: "Test", Tags: []string{"a", "b"}},
+	}
+
+	// Non-map field
+	result := Apply(products, HasKey[ProductWithNonMapField]("Tags", "a"))
+	if len(result) != 0 {
+		t.Errorf("Expected 0 results for non-map field, got %d", len(result))
+	}
+}
+
+func TestHasKeyIncompatibleKeyType(t *testing.T) {
+	products := []Product{
+		{Name: "Test", Attributes: map[string]string{"key": "value"}},
+	}
+
+	// Incompatible key type (int instead of string)
+	result := Apply(products, HasKey[Product]("Attributes", 123))
+	if len(result) != 0 {
+		t.Errorf("Expected 0 results for incompatible key type, got %d", len(result))
+	}
+}
+
+func TestHasValueInvalidField(t *testing.T) {
+	products := []Product{
+		{Name: "Test", Attributes: map[string]string{"key": "value"}},
+	}
+
+	// Invalid field name
+	result := Apply(products, HasValue[Product]("InvalidField", "value"))
+	if len(result) != 0 {
+		t.Errorf("Expected 0 results for invalid field, got %d", len(result))
+	}
+}
+
+func TestHasValueNonMapField(t *testing.T) {
+	products := []ProductWithNonMapField{
+		{Name: "Test", Tags: []string{"a", "b"}},
+	}
+
+	// Non-map field
+	result := Apply(products, HasValue[ProductWithNonMapField]("Tags", "a"))
+	if len(result) != 0 {
+		t.Errorf("Expected 0 results for non-map field, got %d", len(result))
+	}
+}
+
+func TestKeyValueEqualsInvalidField(t *testing.T) {
+	products := []Product{
+		{Name: "Test", Attributes: map[string]string{"key": "value"}},
+	}
+
+	// Invalid field name
+	result := Apply(products, KeyValueEquals[Product]("InvalidField", "key", "value"))
+	if len(result) != 0 {
+		t.Errorf("Expected 0 results for invalid field, got %d", len(result))
+	}
+}
+
+func TestKeyValueEqualsNonMapField(t *testing.T) {
+	products := []ProductWithNonMapField{
+		{Name: "Test", Tags: []string{"a", "b"}},
+	}
+
+	// Non-map field
+	result := Apply(products, KeyValueEquals[ProductWithNonMapField]("Tags", "key", "value"))
+	if len(result) != 0 {
+		t.Errorf("Expected 0 results for non-map field, got %d", len(result))
+	}
+}
+
+func TestKeyValueEqualsIncompatibleKeyType(t *testing.T) {
+	products := []Product{
+		{Name: "Test", Attributes: map[string]string{"key": "value"}},
+	}
+
+	// Incompatible key type
+	result := Apply(products, KeyValueEquals[Product]("Attributes", 123, "value"))
+	if len(result) != 0 {
+		t.Errorf("Expected 0 results for incompatible key type, got %d", len(result))
+	}
+}
+
+func TestKeyValueEqualsNonExistingKey(t *testing.T) {
+	products := []Product{
+		{Name: "Test", Attributes: map[string]string{"key": "value"}},
+	}
+
+	// Key doesn't exist
+	result := Apply(products, KeyValueEquals[Product]("Attributes", "nonexistent", "value"))
+	if len(result) != 0 {
+		t.Errorf("Expected 0 results for non-existing key, got %d", len(result))
+	}
+}
+
+func TestMapContainsAllInvalidField(t *testing.T) {
+	products := []Product{
+		{Name: "Test", Attributes: map[string]string{"key": "value"}},
+	}
+
+	kvPairs := map[interface{}]interface{}{"key": "value"}
+	result := Apply(products, MapContainsAll[Product]("InvalidField", kvPairs))
+	if len(result) != 0 {
+		t.Errorf("Expected 0 results for invalid field, got %d", len(result))
+	}
+}
+
+func TestMapContainsAllNonMapField(t *testing.T) {
+	products := []ProductWithNonMapField{
+		{Name: "Test", Tags: []string{"a", "b"}},
+	}
+
+	kvPairs := map[interface{}]interface{}{"key": "value"}
+	result := Apply(products, MapContainsAll[ProductWithNonMapField]("Tags", kvPairs))
+	if len(result) != 0 {
+		t.Errorf("Expected 0 results for non-map field, got %d", len(result))
+	}
+}
+
+func TestMapContainsAllIncompatibleKeyType(t *testing.T) {
+	products := []Product{
+		{Name: "Test", Attributes: map[string]string{"key": "value"}},
+	}
+
+	// Incompatible key type
+	kvPairs := map[interface{}]interface{}{123: "value"}
+	result := Apply(products, MapContainsAll[Product]("Attributes", kvPairs))
+	if len(result) != 0 {
+		t.Errorf("Expected 0 results for incompatible key type, got %d", len(result))
+	}
+}
+
+func TestMapContainsAnyInvalidField(t *testing.T) {
+	products := []Product{
+		{Name: "Test", Attributes: map[string]string{"key": "value"}},
+	}
+
+	kvPairs := map[interface{}]interface{}{"key": "value"}
+	result := Apply(products, MapContainsAny[Product]("InvalidField", kvPairs))
+	if len(result) != 0 {
+		t.Errorf("Expected 0 results for invalid field, got %d", len(result))
+	}
+}
+
+func TestMapContainsAnyNonMapField(t *testing.T) {
+	products := []ProductWithNonMapField{
+		{Name: "Test", Tags: []string{"a", "b"}},
+	}
+
+	kvPairs := map[interface{}]interface{}{"key": "value"}
+	result := Apply(products, MapContainsAny[ProductWithNonMapField]("Tags", kvPairs))
+	if len(result) != 0 {
+		t.Errorf("Expected 0 results for non-map field, got %d", len(result))
+	}
+}
+
+func TestMapContainsAnyIncompatibleKeyType(t *testing.T) {
+	products := []Product{
+		{Name: "Test", Attributes: map[string]string{"key": "value"}},
+	}
+
+	// All keys are incompatible type
+	kvPairs := map[interface{}]interface{}{123: "value", 456: "other"}
+	result := Apply(products, MapContainsAny[Product]("Attributes", kvPairs))
+	if len(result) != 0 {
+		t.Errorf("Expected 0 results for incompatible key types, got %d", len(result))
+	}
+}
+
+func TestMapSizeEqualsInvalidField(t *testing.T) {
+	products := []Product{
+		{Name: "Test", Attributes: map[string]string{"key": "value"}},
+	}
+
+	result := Apply(products, MapSizeEquals[Product]("InvalidField", 1))
+	if len(result) != 0 {
+		t.Errorf("Expected 0 results for invalid field, got %d", len(result))
+	}
+}
+
+func TestMapSizeEqualsNonMapField(t *testing.T) {
+	products := []ProductWithNonMapField{
+		{Name: "Test", Tags: []string{"a", "b"}},
+	}
+
+	result := Apply(products, MapSizeEquals[ProductWithNonMapField]("Tags", 2))
+	if len(result) != 0 {
+		t.Errorf("Expected 0 results for non-map field, got %d", len(result))
+	}
+}
+
+func TestMapSizeGreaterThanInvalidField(t *testing.T) {
+	products := []Product{
+		{Name: "Test", Attributes: map[string]string{"key": "value"}},
+	}
+
+	result := Apply(products, MapSizeGreaterThan[Product]("InvalidField", 0))
+	if len(result) != 0 {
+		t.Errorf("Expected 0 results for invalid field, got %d", len(result))
+	}
+}
+
+func TestMapSizeGreaterThanNonMapField(t *testing.T) {
+	products := []ProductWithNonMapField{
+		{Name: "Test", Tags: []string{"a", "b"}},
+	}
+
+	result := Apply(products, MapSizeGreaterThan[ProductWithNonMapField]("Tags", 0))
+	if len(result) != 0 {
+		t.Errorf("Expected 0 results for non-map field, got %d", len(result))
+	}
+}
+
+func TestMapSizeLessThanInvalidField(t *testing.T) {
+	products := []Product{
+		{Name: "Test", Attributes: map[string]string{"key": "value"}},
+	}
+
+	result := Apply(products, MapSizeLessThan[Product]("InvalidField", 5))
+	if len(result) != 0 {
+		t.Errorf("Expected 0 results for invalid field, got %d", len(result))
+	}
+}
+
+func TestMapSizeLessThanNonMapField(t *testing.T) {
+	products := []ProductWithNonMapField{
+		{Name: "Test", Tags: []string{"a", "b"}},
+	}
+
+	result := Apply(products, MapSizeLessThan[ProductWithNonMapField]("Tags", 5))
+	if len(result) != 0 {
+		t.Errorf("Expected 0 results for non-map field, got %d", len(result))
+	}
+}
+
 func TestComplexMapFilters(t *testing.T) {
 	products := []Product{
 		{
